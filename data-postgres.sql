@@ -11,16 +11,6 @@ DROP TABLE IF EXISTS Notes;
 DROP TABLE IF EXISTS CustomersTrainings;
 DROP TABLE IF EXISTS MentorsTrainings;
 
-CREATE TABLE Mentors
-(
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    surname TEXT,
-    joining_date DATE,
-    department_id INTEGER,
-    FOREIGN KEY (department_id) REFERENCES Departments(id)
-);
-
 CREATE TABLE Customers
 (
     id SERIAL PRIMARY KEY,
@@ -81,6 +71,16 @@ CREATE TABLE Departments
     id SERIAL PRIMARY KEY,
     name TEXT,
     city TEXT
+);
+
+CREATE TABLE Mentors
+(
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    surname TEXT,
+    joining_date DATE,
+    department_id INTEGER,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
 );
 
 CREATE TABLE TrainingsHistory
