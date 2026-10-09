@@ -1,19 +1,40 @@
-DROP TABLE IF EXISTS Customers;
-DROP TABLE IF EXISTS Mentors;
-DROP TABLE IF EXISTS TrainingMaterials;
-DROP TABLE IF EXISTS Trainings;
-DROP TABLE IF EXISTS Invoices;
-DROP TABLE IF EXISTS Payments;
-DROP TABLE IF EXISTS Payrolls;
-DROP TABLE IF EXISTS Departments;
-DROP TABLE IF EXISTS TrainingsHistory;
-DROP TABLE IF EXISTS Notes;
-DROP TABLE IF EXISTS CustomersTrainings;
-DROP TABLE IF EXISTS MentorsTrainings;
+-- Zestaw danych do zadań z SQL (PostgreSQL) – devs-mentoring.pl
+-- Tabele tworzone są w kolejności zależności kluczy obcych, więc skrypt przechodzi na pustej bazie.
+-- Kwoty pieniężne trzymamy w NUMERIC (dokładne wartości), a nie w DOUBLE PRECISION.
+
+DROP TABLE IF EXISTS MentorsTrainings CASCADE;
+DROP TABLE IF EXISTS CustomersTrainings CASCADE;
+DROP TABLE IF EXISTS Notes CASCADE;
+DROP TABLE IF EXISTS TrainingsHistory CASCADE;
+DROP TABLE IF EXISTS Payrolls CASCADE;
+DROP TABLE IF EXISTS Payments CASCADE;
+DROP TABLE IF EXISTS Invoices CASCADE;
+DROP TABLE IF EXISTS Trainings CASCADE;
+DROP TABLE IF EXISTS TrainingMaterials CASCADE;
+DROP TABLE IF EXISTS Customers CASCADE;
+DROP TABLE IF EXISTS Mentors CASCADE;
+DROP TABLE IF EXISTS Departments CASCADE;
+
+CREATE TABLE Departments
+(
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT,
+    city TEXT
+);
+
+CREATE TABLE Mentors
+(
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT,
+    surname TEXT,
+    joining_date DATE,
+    department_id INTEGER,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
+);
 
 CREATE TABLE Customers
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT,
     surname TEXT,
     joining_date DATE,
@@ -24,15 +45,15 @@ CREATE TABLE Customers
 
 CREATE TABLE TrainingMaterials
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     materials_link TEXT
 );
 
 CREATE TABLE Trainings
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     training_name TEXT,
-    price DOUBLE PRECISION,
+    price NUMERIC(10, 2),
     duration INTERVAL,
     training_material_id INTEGER,
     FOREIGN KEY (training_material_id) REFERENCES TrainingMaterials(id)
@@ -40,52 +61,35 @@ CREATE TABLE Trainings
 
 CREATE TABLE Invoices
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT,
     date DATE,
-    amount DOUBLE PRECISION,
+    amount NUMERIC(10, 2),
     customer_id INTEGER,
     FOREIGN KEY (customer_id) REFERENCES Customers(id)
 );
 
 CREATE TABLE Payments
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date DATE,
-    amount DOUBLE PRECISION,
+    amount NUMERIC(10, 2),
     invoice_id INTEGER,
     FOREIGN KEY (invoice_id) REFERENCES Invoices(id)
 );
 
 CREATE TABLE Payrolls
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date DATE,
-    amount DOUBLE PRECISION,
+    amount NUMERIC(10, 2),
     mentor_id INTEGER,
     FOREIGN KEY (mentor_id) REFERENCES Mentors(id)
 );
 
-CREATE TABLE Departments
-(
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    city TEXT
-);
-
-CREATE TABLE Mentors
-(
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    surname TEXT,
-    joining_date DATE,
-    department_id INTEGER,
-    FOREIGN KEY (department_id) REFERENCES Departments(id)
-);
-
 CREATE TABLE TrainingsHistory
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date_start DATE,
     date_end DATE,
     training_id INTEGER,
@@ -98,7 +102,7 @@ CREATE TABLE TrainingsHistory
 
 CREATE TABLE Notes
 (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     date DATE,
     content TEXT,
     trainings_history_id INTEGER,
